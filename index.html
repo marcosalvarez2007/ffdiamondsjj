@@ -1,0 +1,84 @@
+<!DOCTYPE html><html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Buscar Jugador</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      text-align: center;
+      width: 300px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 10px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #22c55e;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #16a34a;
+    }
+    .resultado {
+      margin-top: 20px;
+      background: #020617;
+      padding: 10px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body><div class="card">
+  <h2>Buscar Jugador</h2>
+  <input type="text" id="nickname" placeholder="Ingresa nickname">
+  <button onclick="buscarJugador()">Buscar</button>  <div class="resultado" id="resultado"></div>
+</div><script>
+async function buscarJugador() {
+  const nombre = document.getElementById("nickname").value;
+  const resultadoDiv = document.getElementById("resultado");
+
+  resultadoDiv.innerHTML = "Buscando...";
+
+  try {
+    const res = await fetch(`https://searchbynicknameapi.onrender.com/search?name=${nombre}`);
+    const data = await res.json();
+
+    if (data.result && data.result.length > 0) {
+      const j = data.result[0];
+
+      resultadoDiv.innerHTML = `
+        <p><b>Nombre:</b> ${j.nickname}</p>
+        <p><b>ID:</b> ${j.account_id}</p>
+        <p><b>Región:</b> ${j.region}</p>
+        <p><b>Nivel:</b> ${j.level}</p>
+      `;
+    } else {
+      resultadoDiv.innerHTML = "No se encontró el jugador";
+    }
+  } catch (error) {
+    resultadoDiv.innerHTML = "Error al buscar";
+  }
+}
+</script></body>
+</html>
