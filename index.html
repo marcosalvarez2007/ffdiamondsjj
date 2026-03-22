@@ -58,10 +58,17 @@ async function buscarJugador() {
   const nombre = document.getElementById("nickname").value;
   const resultadoDiv = document.getElementById("resultado");
 
+  if (!nombre) {
+    resultadoDiv.innerHTML = "Escribe un nombre";
+    return;
+  }
+
   resultadoDiv.innerHTML = "Buscando...";
 
   try {
-    const res = await fetch(`https://searchbynicknameapi.onrender.com/search?name=${nombre}`);
+    const url = `https://api.allorigins.win/raw?url=https://searchbynicknameapi.onrender.com/search?name=${encodeURIComponent(nombre)}`;
+
+    const res = await fetch(url);
     const data = await res.json();
 
     if (data.result && data.result.length > 0) {
@@ -77,7 +84,7 @@ async function buscarJugador() {
       resultadoDiv.innerHTML = "No se encontró el jugador";
     }
   } catch (error) {
-    resultadoDiv.innerHTML = "Error al buscar";
+    resultadoDiv.innerHTML = "Error al buscar (puede ser la API)";
   }
 }
 </script></body>
