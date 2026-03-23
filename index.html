@@ -1,91 +1,89 @@
-<!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Buscar Jugador</title>
-  <style>
+<meta charset="UTF-8">
+<title>Buscar Jugador Free Fire</title>
+<style>
     body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .card {
-      background: #1e293b;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      text-align: center;
-      width: 300px;
+        font-family: Arial;
+        background: #0f172a;
+        color: white;
+        text-align: center;
+        padding: 30px;
     }
     input {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      margin-bottom: 10px;
+        padding: 10px;
+        width: 200px;
+        border-radius: 10px;
+        border: none;
     }
     button {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      background: #22c55e;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        background: #06b6d4;
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
     }
-    button:hover {
-      background: #16a34a;
+    .card {
+        margin-top: 20px;
+        padding: 20px;
+        background: #1e293b;
+        border-radius: 15px;
+        display: inline-block;
     }
-    .resultado {
-      margin-top: 20px;
-      background: #020617;
-      padding: 10px;
-      border-radius: 10px;
-    }
-  </style>
+</style>
 </head>
-<body><div class="card">
-  <h2>Buscar Jugador</h2>
-  <input type="text" id="nickname" placeholder="Ingresa nickname">
-  <button onclick="buscarJugador()">Buscar</button>  <div class="resultado" id="resultado"></div>
-</div><script>
-async function buscarJugador() {
-  const nombre = document.getElementById("nickname").value;
-  const resultadoDiv = document.getElementById("resultado");
+<body>
 
-  if (!nombre) {
-    resultadoDiv.innerHTML = "Escribe un nombre";
-    return;
-  }
+<h1>🔥 Buscar jugador Free Fire</h1>
 
-  resultadoDiv.innerHTML = "Buscando...";
+<input type="text" id="uid" placeholder="Ingresa UID">
+<button onclick="buscar()">Buscar</button>
 
-  try {
-    const url = `https://api.allorigins.win/raw?url=https://searchbynicknameapi.onrender.com/search?name=${encodeURIComponent(nombre)}`;
+<div id="resultado"></div>
 
-    const res = await fetch(url);
-    const data = await res.json();
+<script>
+async function buscar() {
+    let uid = document.getElementById("uid").value;
+    let resultado = document.getElementById("resultado");
 
-    if (data.result && data.result.length > 0) {
-      const j = data.result[0];
+    resultado.innerHTML = "Buscando...";
 
-      resultadoDiv.innerHTML = `
-        <p><b>Nombre:</b> ${j.nickname}</p>
-        <p><b>ID:</b> ${j.account_id}</p>
-        <p><b>Región:</b> ${j.region}</p>
-        <p><b>Nivel:</b> ${j.level}</p>
-      `;
-    } else {
-      resultadoDiv.innerHTML = "No se encontró el jugador";
+    try {
+        let res = await fetch(`https://ffname.vercel.app/?uid=${uid}`);
+        let data = await res.json();
+
+        if (!data.success) {
+            resultado.innerHTML = "❌ No se encontró jugador";
+            return;
+        }
+
+        let squad = data.data.quadstats;
+        let solo = data.data.solostats;
+
+        resultado.innerHTML = `
+            <div class="card">
+                <h2>🎮 UID: ${data.metadata.uid}</h2>
+                <p>🌍 Servidor: ${data.metadata.server}</p>
+                <p>⚔️ Modo: ${data.metadata.matchmode}</p>
+
+                <h3>🔥 Squad</h3>
+                <p>Partidas: ${squad.gamesplayed}</p>
+                <p>Kills: ${squad.kills}</p>
+                <p>Wins: ${squad.wins}</p>
+
+                <h3>👤 Solo</h3>
+                <p>Partidas: ${solo.gamesplayed}</p>
+                <p>Kills: ${solo.kills}</p>
+            </div>
+        `;
+    } catch (error) {
+        resultado.innerHTML = "⚠️ Error con la API";
     }
-  } catch (error) {
-    resultadoDiv.innerHTML = "Error al buscar (puede ser la API)";
-  }
 }
-</script></body>
+</script>
+
+</body>
 </html>
