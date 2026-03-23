@@ -3,38 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Buscar Jugador Free Fire</title>
-  <style>
-    body {
-      font-family: Arial;
-      text-align: center;
-      background: #111;
-      color: white;
-      padding: 50px;
-    }
-    input {
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 5px;
-      border: none;
-      width: 200px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 5px;
-      background: orange;
-      cursor: pointer;
-    }
-    #resultado {
-      margin-top: 20px;
-      font-size: 18px;
-    }
-  </style>
 </head>
-<body>
+<body style="background:#111;color:white;text-align:center;padding:50px;">
 
-  <h1>Buscar jugador Free Fire 🔥</h1>
+  <h1>Buscar jugador 🔥</h1>
 
   <input type="text" id="uid" placeholder="Ingresa ID">
   <button onclick="buscarJugador()">Buscar</button>
@@ -48,15 +20,18 @@
 
       resultado.innerHTML = "Buscando...";
 
-      fetch(`https://freefire-api-six.vercel.app/get_player_personal_show?server=us&uid=${uid}`)
+      fetch(`https://freefire-api-six.vercel.app/get_player_personal_show?server=sac&uid=${uid}`)
         .then(res => res.json())
         .then(data => {
           console.log(data);
 
-          if (data && data.nickname) {
+          // 🔥 FIX REAL
+          if (data && data.data) {
+            let jugador = data.data;
+
             resultado.innerHTML = `
-              <p><b>Nombre:</b> ${data.nickname}</p>
-              <p><b>Nivel:</b> ${data.level}</p>
+              <p><b>Nombre:</b> ${jugador.nickname}</p>
+              <p><b>Nivel:</b> ${jugador.level}</p>
               <p><b>ID:</b> ${uid}</p>
             `;
           } else {
