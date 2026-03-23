@@ -2,11 +2,31 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Buscar Jugador Free Fire</title>
+  <title>Buscar Jugador Free Fire PRO</title>
+  <style>
+    body {
+      background:#111;
+      color:white;
+      text-align:center;
+      font-family:Arial;
+      padding:50px;
+    }
+    input, button {
+      padding:10px;
+      font-size:16px;
+      margin:5px;
+      border-radius:5px;
+      border:none;
+    }
+    button {
+      background:orange;
+      cursor:pointer;
+    }
+  </style>
 </head>
-<body style="background:#111;color:white;text-align:center;padding:50px;">
+<body>
 
-  <h1>Buscar jugador 🔥</h1>
+  <h1>Buscar jugador 🔥 (Auto región)</h1>
 
   <input type="text" id="uid" placeholder="Ingresa ID">
   <button onclick="buscarJugador()">Buscar</button>
@@ -14,33 +34,38 @@
   <div id="resultado"></div>
 
   <script>
-    function buscarJugador() {
+    async function buscarJugador() {
       let uid = document.getElementById("uid").value;
       let resultado = document.getElementById("resultado");
 
-      resultado.innerHTML = "Buscando...";
+      let servers = ["br","us","sg","ind"];
+      resultado.innerHTML = "🔎 Buscando en todas las regiones...";
 
-      fetch(`https://freefire-api-six.vercel.app/get_player_personal_show?server=sac&uid=${uid}`)
-        .then(res => res.json())
-        .then(data => {
-          console.log(data);
+      for (let server of servers) {
+        try {
+          let res = await fetch(`https://freefire-api-six.vercel.app/get_player_personal_show?server=${server}&uid=${uid}`);
+          let data = await res.json();
 
-          // 🔥 FIX REAL
+          console.log("Servidor:", server, data);
+
           if (data && data.data) {
             let jugador = data.data;
 
             resultado.innerHTML = `
+              <p>✅ Encontrado en: <b>${server}</b></p>
               <p><b>Nombre:</b> ${jugador.nickname}</p>
               <p><b>Nivel:</b> ${jugador.level}</p>
               <p><b>ID:</b> ${uid}</p>
             `;
-          } else {
-            resultado.innerHTML = "❌ No se encontró el jugador";
+            return; // 🔥 corta cuando encuentra
           }
-        })
-        .catch(err => {
-          resultado.innerHTML = "⚠️ Error en la API";
-        });
+
+        } catch (e) {
+          console.log("Error en", server);
+        }
+      }
+
+      resultado.innerHTML = "❌ No se encontró el jugador en ninguna región";
     }
   </script>
 
