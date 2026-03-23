@@ -1,24 +1,106 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Buscar Jugador Free Fire</title>
+<meta charset="UTF-8">
+<title>Free Fire Search Pro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  overflow: hidden;
+  color: white;
+  text-align: center;
+  background: #000;
+}
+
+/* Fondo canvas */
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+/* UI */
+.container {
+  margin-top: 80px;
+}
+
+.title {
+  font-size: 45px;
+  color: #ff3b3b;
+  text-shadow: 0 0 10px #ff0000, 0 0 30px #ff3b3b;
+}
+
+input {
+  padding: 12px;
+  width: 260px;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+}
+
+button {
+  padding: 12px 18px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(45deg, #ff0000, #ff7b00);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px #ff0000;
+}
+
+.card {
+  margin-top: 30px;
+  display: inline-block;
+  padding: 25px;
+  min-width: 320px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,0,0,0.4);
+  box-shadow: 0 0 25px rgba(255,0,0,0.3);
+}
+</style>
 </head>
-<body style="background:#111;color:white;text-align:center;padding:50px;font-family:Arial;">
 
-<h1>Buscar jugador 🔥</h1>
+<body>
 
-<input type="text" id="uid" placeholder="Ingresa tu ID">
-<button onclick="buscar()">Buscar</button>
+<canvas id="bg"></canvas>
 
-<div id="resultado" style="margin-top:20px;"></div>
+<div class="container">
+  <h1 class="title">🔥 FREE FIRE SEARCH 🔥</h1>
+
+  <input type="text" id="uid" placeholder="Ingresa tu ID">
+  <button onclick="buscar()">Buscar</button>
+
+  <div id="resultado" class="card"></div>
+</div>
 
 <script>
+/* ======================
+   API SEARCH
+====================== */
 async function buscar() {
-  let uid = document.getElementById("uid").value;
+  let uid = document.getElementById("uid").value.trim();
   let res = document.getElementById("resultado");
 
-  res.innerHTML = "Buscando...";
+  if (!uid) {
+    res.innerHTML = "❌ Ingresa un ID";
+    return;
+  }
+
+  res.innerHTML = "🔎 Buscando...";
 
   try {
     let r = await fetch(`https://keyboards-plastics-exports-porcelain.trycloudflare.com/api/player?uid=${uid}`);
@@ -26,19 +108,61 @@ async function buscar() {
 
     if (data.status === "ok") {
       res.innerHTML = `
-        <p><b>Nombre:</b> ${data.nickname}</p>
-        <p><b>Nivel:</b> ${data.level}</p>
-        <p><b>Región:</b> ${data.region}</p>
-        <button onclick="alert('Próximamente recargas')">💎 Recargar</button>
+        <p>👤 <b>${data.nickname}</b></p>
+        <p>⭐ Nivel: ${data.level}</p>
+        <p>🌎 Región: ${data.region}</p>
+        <button onclick="alert('Recargas próximamente 💎')">💎 Recargar</button>
       `;
     } else {
       res.innerHTML = "❌ Jugador no encontrado";
     }
 
   } catch (e) {
-    res.innerHTML = "⚠️ Error conectando con la API";
+    res.innerHTML = "⚠️ Error con la API";
   }
 }
+
+/* ======================
+   FONDO ANIMADO (PARTÍCULAS)
+====================== */
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+for (let i = 0; i < 120; i++) {
+  particles.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 2,
+    dx: (Math.random() - 0.5) * 1,
+    dy: (Math.random() - 0.5) * 1
+  });
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,50,50,0.8)";
+    ctx.fill();
+
+    p.x += p.dx;
+    p.y += p.dy;
+
+    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+  });
+
+  requestAnimationFrame(animate);
+}
+
+animate();
 </script>
 
 </body>
