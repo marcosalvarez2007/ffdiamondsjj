@@ -362,24 +362,21 @@ async function comprar(cantidad) {
   statusMsg.innerHTML = "⏳ Generando orden de pago...";
 
   // 1. GUARDAR EN SUPABASE Y OBTENER ID
-  const { data, error } = await _supabase
-    .from('pedidos')
-    .insert([{ 
-        player_id: uid, 
-        nickname: nickname, 
-        paquete: cantidad,
-        monto: monto,
-        estado: 'pendiente' 
-    }])
-    .select();
+const { data, error } = await _supabase
+  .from('pedidos')
+  .insert([{ 
+    player_id: uid.toString(),               // Aseguramos que sea texto
+    nickname: nickname || "Desconocido",    // Evitamos que sea nulo
+    paquete: parseInt(cantidad),            // Lo convertimos a número entero
+    monto: parseFloat(monto),               // Lo convertimos a número decimal
+    estado: 'pendiente' 
+  }])
+  .select();
 
-  if (error) {
-    console.error(error);
-    return alert("❌ Error en base de datos");
-  }
-
-  const pedidoID = data[0].id; // El ID para el Robot
-
+if (error) {
+    console.error("Detalle del error:", error); // Esto te dirá el error real en la consola
+    return alert("❌ Error en base de datos: " + error.message);
+}
   // 2. CREAR PAGO EN MERCADO PAGO
   try {
     const mpRes = await fetch("https://api.mercadopago.com/checkout/preferences", {
