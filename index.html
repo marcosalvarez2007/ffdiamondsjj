@@ -302,13 +302,14 @@ canvas {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-// 2. CONFIGURACIÓN DE CONEXIÓN
-// Reemplaza con tus datos reales de Settings > API en Supabase
+// 1. CONFIGURACIÓN DE CONEXIÓN
 const _supabaseUrl = 'https://yjzmyrwtswivvozscsim.supabase.co';
 const _supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqem15cnd0c3dpdnZvenNjc2ltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMTg5MDksImV4cCI6MjA4OTg5NDkwOX0.eAZvrQzVFd9EIbDrLR0nExGYRn3OSyVYhyXkw2zJwBQ';
 const _supabase = supabase.createClient(_supabaseUrl, _supabaseKey);
+
+// 🔑 PEGA AQUÍ TU ACCESS TOKEN QUE COPIASTE EN LA PC
+const MP_ACCESS_TOKEN = "APP_USR-8761208335232861-032412-aa5ac1dfd18dbc0ebefc06172e62f12c-1873929241";
 
 async function buscarPlayer() {
   const uidInput = document.getElementById("uid");
@@ -331,9 +332,8 @@ async function buscarPlayer() {
 
     if (data.status === "ok") {
       status.style.color = "#4ade80";
-      // Guardamos el nickname en un atributo de datos para usarlo después
       status.setAttribute('data-nickname', data.nickname);
-      status.innerHTML = `✅ Jugador encontrado: <b>${data.nickname}</b><br>Región: ${data.region}`;
+      status.innerHTML = `✅ Jugador encontrado: <b>${data.nickname}</b>`;
       grid.style.display = "grid"; 
     } else {
       status.style.color = "#ff3b3b";
@@ -345,7 +345,6 @@ async function buscarPlayer() {
   }
 }
 
-// 3. FUNCIÓN COMPRAR ACTUALIZADA PARA SQL
 async function comprar(cantidad) {
   const uid = document.getElementById("uid").value;
   const statusMsg = document.getElementById("status-msg");
@@ -353,42 +352,68 @@ async function comprar(cantidad) {
 
   if (!uid) return alert("❌ Por favor verifica tu ID primero.");
 
-  // Mostramos carga en el botón
-  console.log("Registrando su pedido...");
+  // Precios reales (Cámbialos si necesitas)
+  const precios = {
+    110: 1200, 341: 3600, 572: 5800,
+    1166: 11500, 2398: 19800, 6160: 47000
+  };
+  const monto = precios[cantidad];
 
-  // INSERTAR EN LA TABLA 'pedidoos'
+  statusMsg.innerHTML = "⏳ Generando orden de pago...";
+
+  // 1. GUARDAR EN SUPABASE Y OBTENER ID
   const { data, error } = await _supabase
-    .from('pedidos') // Asegúrate que el nombre sea igual al de tu tabla
-    .insert([
-      { 
+    .from('pedidos')
+    .insert([{ 
         player_id: uid, 
         nickname: nickname, 
         paquete: cantidad,
+        monto: monto,
         estado: 'pendiente' 
-      }
-    ]);
+    }])
+    .select();
 
   if (error) {
-    console.error("Error al guardar:", error.message);
-    alert("❌ Error al registrar pedido en la base de datos.");
-  } else {
-    alert("✅ Pedido registrado para: " + nickname + ". Redirigiendo al pago...");
-    
-    // Aquí defines tus links de Mercado Pago para cada paquete
-    const linksPagos = {
-      110: "https://mpago.la/1F4rkh3",
-      341: "https://mpago.la/LINK_2",
-      572: "https://mpago.la/2E2BavP",
-      1166: "https://mpago.la/LINK_4",
-      2398: "https://mpago.la/LINK_5",
-      6160: "https://mpago.la/2QJSyMq"
-    };
+    console.error(error);
+    return alert("❌ Error en base de datos");
+  }
 
-    window.location.href = linksPagos[cantidad] || "#";
+  const pedidoID = data[0].id; // El ID para el Robot
+
+  // 2. CREAR PAGO EN MERCADO PAGO
+  try {
+    const mpRes = await fetch("https://api.mercadopago.com/checkout/preferences", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${MP_ACCESS_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        items: [{
+          title: `Recarga ${cantidad} Diamantes - ID: ${uid}`,
+          quantity: 1,
+          unit_price: monto,
+          currency_id: "ARS"
+        }],
+        external_reference: pedidoID.toString(), // 🔗 El link con tu base de datos
+        back_urls: {
+          success: window.location.href,
+          failure: window.location.href
+        },
+        auto_return: "approved"
+      })
+    });
+
+    const preference = await mpRes.json();
+    // 3. MANDAR AL CLIENTE A PAGAR
+    window.location.href = preference.init_point;
+
+  } catch (err) {
+    alert("❌ Error al conectar con Mercado Pago");
   }
 }
 
-// --- FONDO DE PARTÍCULAS (Mantiene tu diseño original) ---
+// --- FONDO DE PARTÍCULAS ---
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 let particles = [];
@@ -413,6 +438,7 @@ function animate() {
 init(); animate();
 window.onresize = init;
 </script>
+
 
 </body>
 </html>
