@@ -301,7 +301,15 @@ canvas {
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+// 2. CONFIGURACIÓN DE CONEXIÓN
+// Reemplaza con tus datos reales de Settings > API en Supabase
+const _supabaseUrl = 'https://tu-proyecto.supabase.co';
+const _supabaseKey = 'tu-anon-key-aqui';
+const _supabase = supabase.createClient(_supabaseUrl, _supabaseKey);
+
 async function buscarPlayer() {
   const uidInput = document.getElementById("uid");
   const uid = uidInput.value.trim();
@@ -323,6 +331,8 @@ async function buscarPlayer() {
 
     if (data.status === "ok") {
       status.style.color = "#4ade80";
+      // Guardamos el nickname en un atributo de datos para usarlo después
+      status.setAttribute('data-nickname', data.nickname);
       status.innerHTML = `✅ Jugador encontrado: <b>${data.nickname}</b><br>Región: ${data.region}`;
       grid.style.display = "grid"; 
     } else {
@@ -335,8 +345,50 @@ async function buscarPlayer() {
   }
 }
 
-function comprar(t) { alert("Redirigiendo al pago por " + t + " diamantes."); }
+// 3. FUNCIÓN COMPRAR ACTUALIZADA PARA SQL
+async function comprar(cantidad) {
+  const uid = document.getElementById("uid").value;
+  const statusMsg = document.getElementById("status-msg");
+  const nickname = statusMsg.getAttribute('data-nickname') || "Desconocido";
 
+  if (!uid) return alert("❌ Por favor verifica tu ID primero.");
+
+  // Mostramos carga en el botón
+  console.log("Registrando su pedido...");
+
+  // INSERTAR EN LA TABLA 'pedidoos'
+  const { data, error } = await _supabase
+    .from('pedidoos') // Asegúrate que el nombre sea igual al de tu tabla
+    .insert([
+      { 
+        player_id: uid, 
+        nickname: nickname, 
+        paquete: cantidad,
+        estado: 'pendiente' 
+      }
+    ]);
+
+  if (error) {
+    console.error("Error al guardar:", error.message);
+    alert("❌ Error al registrar pedido en la base de datos.");
+  } else {
+    alert("✅ Pedido registrado para: " + nickname + ". Redirigiendo al pago...");
+    
+    // Aquí defines tus links de Mercado Pago para cada paquete
+    const linksPagos = {
+      110: "https://mpago.la/LINK_1",
+      341: "https://mpago.la/LINK_2",
+      572: "https://mpago.la/LINK_3",
+      1166: "https://mpago.la/LINK_4",
+      2398: "https://mpago.la/LINK_5",
+      6160: "https://mpago.la/LINK_6"
+    };
+
+    window.location.href = linksPagos[cantidad] || "#";
+  }
+}
+
+// --- FONDO DE PARTÍCULAS (Mantiene tu diseño original) ---
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 let particles = [];
