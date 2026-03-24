@@ -3,17 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Diamond Store - Free Fire</title>
+<title>Diamond Store - Free Fire Pro</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 
 <style>
 :root {
   --ff-cyan: #00acc1;
-  --ff-cyan-glow: rgba(0, 172, 193, 0.5);
+  --ff-cyan-glow: rgba(0, 172, 193, 0.4);
   --dark-bg: #0d1117;
   --card-bg: #161b22;
   --border-color: #30363d;
+  --accent-gradient: linear-gradient(45deg, #ff3b3b, #ff7b00);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
@@ -25,7 +30,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Fondo animado de partículas */
+/* Fondo de Partículas */
 canvas {
   position: fixed;
   top: 0;
@@ -35,39 +40,41 @@ canvas {
 }
 
 .container {
-  padding: 50px 20px;
-  max-width: 1100px;
+  padding: 60px 20px;
+  max-width: 1200px;
   margin: auto;
 }
 
 .title {
   font-family: 'Orbitron', sans-serif;
-  font-size: 2.5rem;
-  letter-spacing: 2px;
-  margin-bottom: 30px;
+  font-size: 2.8rem;
+  letter-spacing: 3px;
+  margin-bottom: 40px;
   text-transform: uppercase;
   background: linear-gradient(to bottom, #ffffff, #888);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
 }
 
-/* Buscador */
+/* Buscador Profesional */
 .search-section {
   background: rgba(255, 255, 255, 0.03);
   padding: 30px;
   border-radius: 20px;
   border: 1px solid var(--border-color);
-  backdrop-filter: blur(10px);
-  display: inline-block;
+  backdrop-filter: blur(12px);
+  display: inline-flex;
+  gap: 10px;
   margin-bottom: 60px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 .search-section input {
-  padding: 15px;
-  width: 250px;
+  padding: 15px 20px;
+  width: 300px;
   border: 1px solid var(--border-color);
-  border-radius: 10px;
+  border-radius: 12px;
   background: #0d1117;
   color: white;
   outline: none;
@@ -77,32 +84,37 @@ canvas {
 
 .search-section input:focus {
   border-color: var(--ff-cyan);
-  box-shadow: 0 0 10px var(--ff-cyan-glow);
+  box-shadow: 0 0 15px var(--ff-cyan-glow);
 }
 
 .btn-verify {
-  padding: 15px 30px;
-  margin-left: 10px;
+  padding: 15px 35px;
   border: none;
-  border-radius: 10px;
-  background: linear-gradient(45deg, #ff3b3b, #ff7b00);
+  border-radius: 12px;
+  background: var(--accent-gradient);
   color: white;
   font-family: 'Orbitron', sans-serif;
   font-weight: bold;
   cursor: pointer;
-  transition: 0.3s;
+  transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .btn-verify:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(255, 59, 59, 0.4);
+  box-shadow: 0 0 25px rgba(255, 59, 59, 0.5);
 }
 
 /* Grilla de Productos */
 .diamond-grid {
-  display: none; /* Se activa al buscar exitosamente */
+  display: none; /* Se activa vía JS */
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px;
+  gap: 30px;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .diamond-card {
@@ -110,45 +122,70 @@ canvas {
   border-radius: 20px;
   border: 1px solid var(--border-color);
   overflow: hidden;
-  transition: 0.3s;
-  text-align: left;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .diamond-card:hover {
   transform: translateY(-10px);
   border-color: var(--ff-cyan);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px var(--ff-cyan-glow);
 }
 
+/* Header de Tarjeta (Imagen Centrada) */
 .card-header {
-  background: linear-gradient(180deg, #0a1929 0%, #000000 100%);
-  padding: 40px 20px;
-  text-align: center;
-  position: relative;
+  background: linear-gradient(180deg, #1a2332 0%, #0d1117 100%);
+  padding: 35px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.card-header .amount-text {
+.img-wrapper {
+  height: 110px; /* Altura controlada para alineación perfecta */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.img-wrapper img {
+  max-height: 100%;
+  max-width: 150px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 15px var(--ff-cyan-glow));
+  transition: transform 0.4s ease;
+}
+
+.diamond-card:hover .img-wrapper img {
+  transform: scale(1.15) rotate(2deg);
+}
+
+.amount-text {
   font-family: 'Orbitron', sans-serif;
   font-size: 1.8rem;
   font-weight: 700;
-  display: block;
+  color: #fff;
+  margin: 0;
 }
 
-.card-header .label-text {
+.label-text {
   font-size: 0.75rem;
-  color: #8b949e;
-  letter-spacing: 2px;
+  color: var(--ff-cyan);
+  letter-spacing: 3px;
+  font-weight: 700;
+  margin-top: 5px;
 }
 
-.card-header img {
-  width: auto;
-  height: 90px;
-  margin-top: 20px;
-  filter: drop-shadow(0 0 15px var(--ff-cyan-glow));
-}
-
+/* Cuerpo de Tarjeta */
 .card-body {
   padding: 25px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .card-body h3 {
@@ -161,32 +198,37 @@ canvas {
 .card-body p {
   color: #8b949e;
   font-size: 0.85rem;
-  margin: 12px 0 25px 0;
+  margin: 15px 0 25px 0;
+  flex-grow: 1;
 }
 
 .btn-buy {
   width: 100%;
-  padding: 14px;
+  padding: 15px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--ff-cyan);
   color: white;
+  font-family: 'Orbitron', sans-serif;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1rem;
   cursor: pointer;
   transition: 0.3s;
   text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .btn-buy:hover {
   background: #00d4ec;
   box-shadow: 0 0 20px var(--ff-cyan-glow);
+  letter-spacing: 2px;
 }
 
 #status-msg {
-  margin-bottom: 25px;
+  margin-bottom: 30px;
   font-weight: bold;
   font-size: 1.1rem;
+  min-height: 1.5em;
 }
 </style>
 </head>
@@ -208,9 +250,11 @@ canvas {
     
     <div class="diamond-card">
       <div class="card-header">
-        <span class="amount-text">100+10</span>
+        <div class="img-wrapper">
+          <img src="diamantes_110.png" alt="110 Diamantes">
+        </div>
+        <span class="amount-text">100 + 10</span>
         <span class="label-text">DIAMANTES</span>
-        <img src="diamantes_110.png" alt="Pack 1">
       </div>
       <div class="card-body">
         <h3>100 diamantes + 10 bono</h3>
@@ -221,9 +265,11 @@ canvas {
 
     <div class="diamond-card">
       <div class="card-header">
-        <span class="amount-text">310+31</span>
+        <div class="img-wrapper">
+          <img src="diamantes_341.png" alt="341 Diamantes">
+        </div>
+        <span class="amount-text">310 + 31</span>
         <span class="label-text">DIAMANTES</span>
-        <img src="diamantes_341.png" alt="Pack 2">
       </div>
       <div class="card-body">
         <h3>310 diamantes + 31 bono</h3>
@@ -234,9 +280,11 @@ canvas {
 
     <div class="diamond-card">
       <div class="card-header">
-        <span class="amount-text">520+52</span>
+        <div class="img-wrapper">
+          <img src="diamantes_572.png" alt="572 Diamantes">
+        </div>
+        <span class="amount-text">520 + 52</span>
         <span class="label-text">DIAMANTES</span>
-        <img src="diamantes_572.png" alt="Pack 3">
       </div>
       <div class="card-body">
         <h3>520 diamantes + 52 bono</h3>
@@ -247,9 +295,11 @@ canvas {
 
     <div class="diamond-card">
       <div class="card-header">
-        <span class="amount-text">1060+106</span>
+        <div class="img-wrapper">
+          <img src="diamantes_1166.png" alt="1166 Diamantes">
+        </div>
+        <span class="amount-text">1060 + 106</span>
         <span class="label-text">DIAMANTES</span>
-        <img src="diamantes_1166.png" alt="Pack 4">
       </div>
       <div class="card-body">
         <h3>1060 diamantes + 106 bono</h3>
@@ -260,9 +310,11 @@ canvas {
 
     <div class="diamond-card">
       <div class="card-header">
-        <span class="amount-text">2180+218</span>
+        <div class="img-wrapper">
+          <img src="diamantes_2398.png" alt="2398 Diamantes">
+        </div>
+        <span class="amount-text">2180 + 218</span>
         <span class="label-text">DIAMANTES</span>
-        <img src="diamantes_2398.png" alt="Pack 5">
       </div>
       <div class="card-body">
         <h3>2180 diamantes + 218 bono</h3>
@@ -273,9 +325,11 @@ canvas {
 
     <div class="diamond-card">
       <div class="card-header">
-        <span class="amount-text">5600+560</span>
+        <div class="img-wrapper">
+          <img src="diamantes_6160.png" alt="6160 Diamantes">
+        </div>
+        <span class="amount-text">5600 + 560</span>
         <span class="label-text">DIAMANTES</span>
-        <img src="diamantes_6160.png" alt="Pack 6">
       </div>
       <div class="card-body">
         <h3>5600 diamantes + 560 bono</h3>
@@ -288,6 +342,7 @@ canvas {
 </div>
 
 <script>
+// Función de búsqueda mejorada
 async function buscarPlayer() {
   const uidInput = document.getElementById("uid");
   const uid = uidInput.value.trim();
@@ -301,7 +356,7 @@ async function buscarPlayer() {
   }
 
   status.style.color = "#00acc1";
-  status.innerHTML = "🔎 Verificando ID en el sistema...";
+  status.innerHTML = "🔎 Verificando ID en el servidor...";
 
   try {
     const response = await fetch(`https://realtor-debut-advantages-minimize.trycloudflare.com/api/player?uid=${uid}`);
@@ -309,11 +364,11 @@ async function buscarPlayer() {
 
     if (data.status === "ok") {
       status.style.color = "#4ade80";
-      status.innerHTML = `✅ Jugador: <b>${data.nickname}</b> | Región: ${data.region}`;
+      status.innerHTML = `✅ Jugador encontrado: <b>${data.nickname}</b> | Región: ${data.region}`;
       grid.style.display = "grid"; 
     } else {
       status.style.color = "#ff3b3b";
-      status.innerHTML = "❌ ID no encontrado. Verifica los datos.";
+      status.innerHTML = "❌ ID no válido. Asegúrate de que sea el ID de juego.";
       grid.style.display = "none";
     }
   } catch (error) {
@@ -323,24 +378,27 @@ async function buscarPlayer() {
 }
 
 function comprar(total) {
-  alert("Redirigiendo a pasarela de pago segura para " + total + " diamantes.");
+  alert("Procesando pedido de " + total + " diamantes...\nRedirigiendo a pasarela segura.");
 }
 
-/* Sistema de Partículas */
+/* Sistema de Partículas Optimizado */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
 let particles = [];
-for (let i = 0; i < 90; i++) {
-  particles.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 2 + 0.5,
-    dx: (Math.random() - 0.5) * 0.4,
-    dy: (Math.random() - 0.5) * 0.4
-  });
+
+function initParticles() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  particles = [];
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 2 + 0.5,
+      dx: (Math.random() - 0.5) * 0.5,
+      dy: (Math.random() - 0.5) * 0.5
+    });
+  }
 }
 
 function animate() {
@@ -348,21 +406,21 @@ function animate() {
   particles.forEach(p => {
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(0, 172, 193, 0.15)";
+    ctx.fillStyle = "rgba(0, 172, 193, 0.2)";
     ctx.fill();
     p.x += p.dx;
     p.y += p.dy;
+
     if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
     if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
   });
   requestAnimationFrame(animate);
 }
+
+initParticles();
 animate();
 
-window.addEventListener('resize', () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
+window.addEventListener('resize', initParticles);
 </script>
 
 </body>
