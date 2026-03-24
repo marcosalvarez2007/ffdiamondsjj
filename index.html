@@ -228,7 +228,7 @@ canvas {
       </div>
       <div class="card-body">
         <h3>100 diamantes + 10 bono</h3>
-        <p>Máximo por compra: 50 uds.</p>
+        <p>Precio: $1.200</p>
         <button class="btn-buy" onclick="comprar(110)">COMPRAR</button>
       </div>
     </div>
@@ -241,7 +241,7 @@ canvas {
       </div>
       <div class="card-body">
         <h3>310 diamantes + 31 bono</h3>
-        <p>Máximo por compra: 50 uds.</p>
+        <p>Precio: $3.600</p>
         <button class="btn-buy" onclick="comprar(341)">COMPRAR</button>
       </div>
     </div>
@@ -254,7 +254,7 @@ canvas {
       </div>
       <div class="card-body">
         <h3>520 diamantes + 52 bono</h3>
-        <p>Máximo por compra: 50 uds.</p>
+        <p>Precio: $5.800</p>
         <button class="btn-buy" onclick="comprar(572)">COMPRAR</button>
       </div>
     </div>
@@ -267,7 +267,7 @@ canvas {
       </div>
       <div class="card-body">
         <h3>1060 diamantes + 106 bono</h3>
-        <p>Máximo por compra: 50 uds.</p>
+        <p>Precio: $11.500</p>
         <button class="btn-buy" onclick="comprar(1166)">COMPRAR</button>
       </div>
     </div>
@@ -280,7 +280,7 @@ canvas {
       </div>
       <div class="card-body">
         <h3>2180 diamantes + 218 bono</h3>
-        <p>Máximo por compra: 50 uds.</p>
+        <p>Precio: $19.800</p>
         <button class="btn-buy" onclick="comprar(2398)">COMPRAR</button>
       </div>
     </div>
@@ -293,7 +293,7 @@ canvas {
       </div>
       <div class="card-body">
         <h3>5600 diamantes + 560 bono</h3>
-        <p>Máximo por compra: 50 uds.</p>
+        <p>Precio: $47.000</p>
         <button class="btn-buy" onclick="comprar(6160)">COMPRAR</button>
       </div>
     </div>
@@ -303,12 +303,12 @@ canvas {
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// 1. CONFIGURACIÓN DE CONEXIÓN
+// 1. CONFIGURACIÓN SUPABASE
 const _supabaseUrl = 'https://yjzmyrwtswivvozscsim.supabase.co';
 const _supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqem15cnd0c3dpdnZvenNjc2ltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMTg5MDksImV4cCI6MjA4OTg5NDkwOX0.eAZvrQzVFd9EIbDrLR0nExGYRn3OSyVYhyXkw2zJwBQ';
 const _supabase = supabase.createClient(_supabaseUrl, _supabaseKey);
 
-// 🔑 PEGA AQUÍ TU ACCESS TOKEN QUE COPIASTE EN LA PC
+// 2. CONFIGURACIÓN MERCADO PAGO (PRODUCCIÓN)
 const MP_ACCESS_TOKEN = "APP_USR-8761208335232861-032412-aa5ac1dfd18dbc0ebefc06172e62f12c-1873929241";
 
 async function buscarPlayer() {
@@ -350,35 +350,31 @@ async function comprar(cantidad) {
   const statusMsg = document.getElementById("status-msg");
   const nickname = statusMsg.getAttribute('data-nickname') || "Desconocido";
 
-  if (!uid) return alert("❌ Por favor verifica tu ID primero.");
+  if (!uid) return alert("❌ Verifica tu ID primero.");
 
-  // Precios reales (Cámbialos si necesitas)
   const precios = {
     110: 1200, 341: 3600, 572: 5800,
     1166: 11500, 2398: 19800, 6160: 47000
   };
   const monto = precios[cantidad];
 
-  statusMsg.innerHTML = "⏳ Generando orden de pago...";
-// 1. GUARDAR EN SUPABASE
-const { data, error } = await _supabase
-  .from('pedidos')
-  .insert([{ 
-    player_id: uid.toString(),
-    nickname: nickname || "Desconocido",
-    paquete: parseInt(cantidad),
-    monto: parseFloat(monto),
-    estado: 'pendiente' 
-  }]); // Borramos el .select() y el punto y coma va aquí
+  statusMsg.innerHTML = "⏳ Generando orden...";
 
-// Si llegó acá es porque se guardó bien, ahora que siga con Mercado Pago...
-
-if (error) {
-    console.error("Detalle del error:", error); // Esto te dirá el error real en la consola
-    return alert("❌ Error en base de datos: " + error.message);
-}
-  // 2. CREAR PAGO EN MERCADO PAGO
   try {
+    // A. GUARDAR EN SUPABASE (Sin .select() para evitar error de RLS)
+    const { error: dbError } = await _supabase
+      .from('pedidos')
+      .insert([{ 
+        player_id: uid.toString(),
+        nickname: nickname,
+        paquete: parseInt(cantidad),
+        monto: parseFloat(monto),
+        estado: 'pendiente' 
+      }]);
+
+    if (dbError) throw new Error("Error Base Datos: " + dbError.message);
+
+    // B. CREAR PREFERENCIA EN MERCADO PAGO
     const mpRes = await fetch("https://api.mercadopago.com/checkout/preferences", {
       method: "POST",
       headers: {
@@ -387,12 +383,12 @@ if (error) {
       },
       body: JSON.stringify({
         items: [{
-          title: `Recarga ${cantidad} Diamantes - ID: ${uid}`,
+          title: `Recarga ${cantidad} Diams - ID ${uid}`,
           quantity: 1,
-          unit_price: monto,
+          unit_price: Number(monto),
           currency_id: "ARS"
         }],
-        external_reference: pedidoID.toString(), // 🔗 El link con tu base de datos
+        external_reference: `${uid}-${Date.now()}`, 
         back_urls: {
           success: window.location.href,
           failure: window.location.href
@@ -402,15 +398,21 @@ if (error) {
     });
 
     const preference = await mpRes.json();
-    // 3. MANDAR AL CLIENTE A PAGAR
-    window.location.href = preference.init_point;
+    
+    if (preference.init_point) {
+      window.location.href = preference.init_point;
+    } else {
+      throw new Error("No se pudo crear el link de pago");
+    }
 
   } catch (err) {
-    alert("❌ Error al conectar con Mercado Pago");
+    console.error(err);
+    alert("❌ Error: " + err.message);
+    statusMsg.innerHTML = "❌ Error al procesar";
   }
 }
 
-// --- FONDO DE PARTÍCULAS ---
+// --- FONDO ANIMADO ---
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 let particles = [];
@@ -435,7 +437,5 @@ function animate() {
 init(); animate();
 window.onresize = init;
 </script>
-
-
 </body>
 </html>
