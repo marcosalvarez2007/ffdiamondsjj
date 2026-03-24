@@ -17,20 +17,19 @@
   --accent-gradient: linear-gradient(45deg, #ff3b3b, #ff7b00);
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
   background-color: var(--dark-bg);
   color: white;
-  text-align: center;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra horizontalmente todo el body */
 }
 
-/* Fondo de Partículas */
 canvas {
   position: fixed;
   top: 0;
@@ -40,39 +39,50 @@ canvas {
 }
 
 .container {
-  padding: 60px 20px;
-  max-width: 1200px;
-  margin: auto;
+  padding: 40px 15px;
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centrado estricto de hijos */
+  text-align: center;
 }
 
 .title {
   font-family: 'Orbitron', sans-serif;
-  font-size: 2.8rem;
-  letter-spacing: 3px;
-  margin-bottom: 40px;
+  font-size: clamp(1.8rem, 5vw, 2.8rem); /* Tamaño fluido */
+  letter-spacing: 2px;
+  margin-bottom: 30px;
   text-transform: uppercase;
   background: linear-gradient(to bottom, #ffffff, #888);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
 }
 
-/* Buscador Profesional */
+/* Buscador Mejorado y Centrado */
 .search-section {
   background: rgba(255, 255, 255, 0.03);
-  padding: 30px;
+  padding: 20px;
   border-radius: 20px;
   border: 1px solid var(--border-color);
   backdrop-filter: blur(12px);
-  display: inline-flex;
+  display: flex;
+  flex-direction: row;
   gap: 10px;
-  margin-bottom: 60px;
+  width: 100%;
+  max-width: 500px; /* Evita que sea demasiado ancho en PC */
+  margin-bottom: 40px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
+@media (max-width: 480px) {
+  .search-section { flex-direction: column; }
+  .search-section input { width: 100% !important; }
+}
+
 .search-section input {
-  padding: 15px 20px;
-  width: 300px;
+  flex: 1;
+  padding: 15px;
   border: 1px solid var(--border-color);
   border-radius: 12px;
   background: #0d1117;
@@ -80,6 +90,7 @@ canvas {
   outline: none;
   font-size: 1rem;
   transition: 0.3s;
+  min-width: 0; /* Evita desbordamiento en flex */
 }
 
 .search-section input:focus {
@@ -88,7 +99,7 @@ canvas {
 }
 
 .btn-verify {
-  padding: 15px 35px;
+  padding: 15px 25px;
   border: none;
   border-radius: 12px;
   background: var(--accent-gradient);
@@ -96,25 +107,30 @@ canvas {
   font-family: 'Orbitron', sans-serif;
   font-weight: bold;
   cursor: pointer;
-  transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: 0.3s;
+  white-space: nowrap;
 }
 
 .btn-verify:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 25px rgba(255, 59, 59, 0.5);
+  transform: scale(1.03);
+  box-shadow: 0 0 20px rgba(255, 59, 59, 0.4);
+}
+
+/* Estado del Jugador */
+#status-msg {
+  margin-bottom: 30px;
+  font-size: 1rem;
+  line-height: 1.5;
+  max-width: 400px;
 }
 
 /* Grilla de Productos */
 .diamond-grid {
-  display: none; /* Se activa vía JS */
+  display: none; 
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-  animation: fadeIn 0.8s ease forwards;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  gap: 25px;
+  width: 100%;
+  justify-content: center; /* Centra las tarjetas si hay pocas */
 }
 
 .diamond-card {
@@ -122,113 +138,77 @@ canvas {
   border-radius: 20px;
   border: 1px solid var(--border-color);
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: 0.3s;
   display: flex;
   flex-direction: column;
 }
 
 .diamond-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-8px);
   border-color: var(--ff-cyan);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px var(--ff-cyan-glow);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px var(--ff-cyan-glow);
 }
 
-/* Header de Tarjeta (Imagen Centrada) */
 .card-header {
-  background: linear-gradient(180deg, #1a2332 0%, #0d1117 100%);
-  padding: 35px 20px;
+  padding: 30px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(180deg, #1a2332 0%, #0d1117 100%);
 }
 
-.img-wrapper {
-  height: 110px; /* Altura controlada para alineación perfecta */
+.img-container {
+  height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
-.img-wrapper img {
+.img-container img {
   max-height: 100%;
-  max-width: 150px;
+  max-width: 180px;
   object-fit: contain;
-  filter: drop-shadow(0 0 15px var(--ff-cyan-glow));
-  transition: transform 0.4s ease;
-}
-
-.diamond-card:hover .img-wrapper img {
-  transform: scale(1.15) rotate(2deg);
+  filter: drop-shadow(0 0 10px var(--ff-cyan-glow));
 }
 
 .amount-text {
   font-family: 'Orbitron', sans-serif;
   font-size: 1.8rem;
   font-weight: 700;
-  color: #fff;
-  margin: 0;
 }
 
 .label-text {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--ff-cyan);
   letter-spacing: 3px;
-  font-weight: 700;
-  margin-top: 5px;
+  font-weight: bold;
 }
 
-/* Cuerpo de Tarjeta */
 .card-body {
-  padding: 25px;
-  display: flex;
-  flex-direction: column;
+  padding: 20px;
   flex-grow: 1;
 }
 
-.card-body h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 400;
-  color: #e6edf3;
-}
-
-.card-body p {
-  color: #8b949e;
-  font-size: 0.85rem;
-  margin: 15px 0 25px 0;
-  flex-grow: 1;
-}
+.card-body h3 { margin: 0; font-size: 1rem; color: #e6edf3; }
+.card-body p { color: #8b949e; font-size: 0.8rem; margin: 10px 0 20px; }
 
 .btn-buy {
   width: 100%;
-  padding: 15px;
+  padding: 14px;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--ff-cyan);
   color: white;
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
-  font-size: 1rem;
   cursor: pointer;
   transition: 0.3s;
-  text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 .btn-buy:hover {
   background: #00d4ec;
-  box-shadow: 0 0 20px var(--ff-cyan-glow);
-  letter-spacing: 2px;
-}
-
-#status-msg {
-  margin-bottom: 30px;
-  font-weight: bold;
-  font-size: 1.1rem;
-  min-height: 1.5em;
+  box-shadow: 0 0 15px var(--ff-cyan-glow);
 }
 </style>
 </head>
@@ -247,11 +227,10 @@ canvas {
   <div id="status-msg"></div>
 
   <div id="diamond-grid" class="diamond-grid">
-    
     <div class="diamond-card">
       <div class="card-header">
-        <div class="img-wrapper">
-          <img src="diamantes_110.png" alt="110 Diamantes">
+        <div class="img-container">
+          <img src="diamantes_110.png" alt="Pack">
         </div>
         <span class="amount-text">100 + 10</span>
         <span class="label-text">DIAMANTES</span>
@@ -259,14 +238,14 @@ canvas {
       <div class="card-body">
         <h3>100 diamantes + 10 bono</h3>
         <p>Máximo por compra: 50 uds.</p>
-        <button class="btn-buy" onclick="comprar(110)">Comprar</button>
+        <button class="btn-buy" onclick="comprar(110)">COMPRAR</button>
       </div>
     </div>
-
+    
     <div class="diamond-card">
       <div class="card-header">
-        <div class="img-wrapper">
-          <img src="diamantes_341.png" alt="341 Diamantes">
+        <div class="img-container">
+          <img src="diamantes_341.png" alt="Pack">
         </div>
         <span class="amount-text">310 + 31</span>
         <span class="label-text">DIAMANTES</span>
@@ -274,75 +253,13 @@ canvas {
       <div class="card-body">
         <h3>310 diamantes + 31 bono</h3>
         <p>Máximo por compra: 50 uds.</p>
-        <button class="btn-buy" onclick="comprar(341)">Comprar</button>
+        <button class="btn-buy" onclick="comprar(341)">COMPRAR</button>
       </div>
     </div>
-
-    <div class="diamond-card">
-      <div class="card-header">
-        <div class="img-wrapper">
-          <img src="diamantes_572.png" alt="572 Diamantes">
-        </div>
-        <span class="amount-text">520 + 52</span>
-        <span class="label-text">DIAMANTES</span>
-      </div>
-      <div class="card-body">
-        <h3>520 diamantes + 52 bono</h3>
-        <p>Máximo por compra: 50 uds.</p>
-        <button class="btn-buy" onclick="comprar(572)">Comprar</button>
-      </div>
     </div>
-
-    <div class="diamond-card">
-      <div class="card-header">
-        <div class="img-wrapper">
-          <img src="diamantes_1166.png" alt="1166 Diamantes">
-        </div>
-        <span class="amount-text">1060 + 106</span>
-        <span class="label-text">DIAMANTES</span>
-      </div>
-      <div class="card-body">
-        <h3>1060 diamantes + 106 bono</h3>
-        <p>Máximo por compra: 20 uds.</p>
-        <button class="btn-buy" onclick="comprar(1166)">Comprar</button>
-      </div>
-    </div>
-
-    <div class="diamond-card">
-      <div class="card-header">
-        <div class="img-wrapper">
-          <img src="diamantes_2398.png" alt="2398 Diamantes">
-        </div>
-        <span class="amount-text">2180 + 218</span>
-        <span class="label-text">DIAMANTES</span>
-      </div>
-      <div class="card-body">
-        <h3>2180 diamantes + 218 bono</h3>
-        <p>Máximo por compra: 15 uds.</p>
-        <button class="btn-buy" onclick="comprar(2398)">Comprar</button>
-      </div>
-    </div>
-
-    <div class="diamond-card">
-      <div class="card-header">
-        <div class="img-wrapper">
-          <img src="diamantes_6160.png" alt="6160 Diamantes">
-        </div>
-        <span class="amount-text">5600 + 560</span>
-        <span class="label-text">DIAMANTES</span>
-      </div>
-      <div class="card-body">
-        <h3>5600 diamantes + 560 bono</h3>
-        <p>Máximo por compra: 15 uds.</p>
-        <button class="btn-buy" onclick="comprar(6160)">Comprar</button>
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <script>
-// Función de búsqueda mejorada
 async function buscarPlayer() {
   const uidInput = document.getElementById("uid");
   const uid = uidInput.value.trim();
@@ -351,12 +268,12 @@ async function buscarPlayer() {
 
   if (!uid) {
     status.style.color = "#ff3b3b";
-    status.innerHTML = "❌ Por favor, ingresa un ID";
+    status.innerHTML = "❌ Ingresa tu ID de Jugador";
     return;
   }
 
   status.style.color = "#00acc1";
-  status.innerHTML = "🔎 Verificando ID en el servidor...";
+  status.innerHTML = "🔎 Verificando ID...";
 
   try {
     const response = await fetch(`https://realtor-debut-advantages-minimize.trycloudflare.com/api/player?uid=${uid}`);
@@ -364,63 +281,44 @@ async function buscarPlayer() {
 
     if (data.status === "ok") {
       status.style.color = "#4ade80";
-      status.innerHTML = `✅ Jugador encontrado: <b>${data.nickname}</b> | Región: ${data.region}`;
+      status.innerHTML = `✅ Jugador encontrado: <b>${data.nickname}</b><br>Región: ${data.region}`;
       grid.style.display = "grid"; 
     } else {
       status.style.color = "#ff3b3b";
-      status.innerHTML = "❌ ID no válido. Asegúrate de que sea el ID de juego.";
+      status.innerHTML = "❌ ID no encontrado";
       grid.style.display = "none";
     }
-  } catch (error) {
-    status.style.color = "#ff3b3b";
-    status.innerHTML = "⚠️ Error de conexión con el servidor";
+  } catch (e) {
+    status.innerHTML = "⚠️ Error de conexión";
   }
 }
 
-function comprar(total) {
-  alert("Procesando pedido de " + total + " diamantes...\nRedirigiendo a pasarela segura.");
-}
+function comprar(t) { alert("Redirigiendo al pago por " + t + " diamantes."); }
 
-/* Sistema de Partículas Optimizado */
+// Fondo de partículas
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 let particles = [];
-
-function initParticles() {
+function init() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   particles = [];
-  for (let i = 0; i < 80; i++) {
-    particles.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 2 + 0.5,
-      dx: (Math.random() - 0.5) * 0.5,
-      dy: (Math.random() - 0.5) * 0.5
-    });
+  for(let i=0; i<70; i++) {
+    particles.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*2, dx:(Math.random()-0.5)*0.5, dy:(Math.random()-0.5)*0.5});
   }
 }
-
 function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
   particles.forEach(p => {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(0, 172, 193, 0.2)";
-    ctx.fill();
-    p.x += p.dx;
-    p.y += p.dy;
-
-    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(0,172,193,0.15)"; ctx.fill();
+    p.x += p.dx; p.y += p.dy;
+    if(p.x<0||p.x>canvas.width) p.dx*=-1; if(p.y<0||p.y>canvas.height) p.dy*=-1;
   });
   requestAnimationFrame(animate);
 }
-
-initParticles();
-animate();
-
-window.addEventListener('resize', initParticles);
+init(); animate();
+window.onresize = init;
 </script>
 
 </body>
