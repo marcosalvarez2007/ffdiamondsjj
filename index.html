@@ -228,7 +228,7 @@ canvas {
       </div>
       <div class="card-body">
         <h3>100 diamantes + 10 bono</h3>
-        <p>Precio: $1.200</p>
+        <p>Precio: $1</p>
         <button class="btn-buy" onclick="comprar(110)">COMPRAR</button>
       </div>
     </div>
@@ -353,7 +353,7 @@ async function comprar(cantidad) {
   if (!uid) return alert("❌ Verifica tu ID primero.");
 
   const precios = {
-    110: 1200, 341: 3600, 572: 5800,
+    110: 1, 341: 3600, 572: 5800,
     1166: 11500, 2398: 19800, 6160: 47000
   };
   const monto = precios[cantidad];
