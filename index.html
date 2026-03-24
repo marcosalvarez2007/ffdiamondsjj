@@ -360,18 +360,18 @@ async function comprar(cantidad) {
   const monto = precios[cantidad];
 
   statusMsg.innerHTML = "⏳ Generando orden de pago...";
-
-  // 1. GUARDAR EN SUPABASE Y OBTENER ID
+// 1. GUARDAR EN SUPABASE
 const { data, error } = await _supabase
   .from('pedidos')
   .insert([{ 
-    player_id: uid.toString(),               // Aseguramos que sea texto
-    nickname: nickname || "Desconocido",    // Evitamos que sea nulo
-    paquete: parseInt(cantidad),            // Lo convertimos a número entero
-    monto: parseFloat(monto),               // Lo convertimos a número decimal
+    player_id: uid.toString(),
+    nickname: nickname || "Desconocido",
+    paquete: parseInt(cantidad),
+    monto: parseFloat(monto),
     estado: 'pendiente' 
-  }])
-  .select();
+  }]); // Borramos el .select() y el punto y coma va aquí
+
+// Si llegó acá es porque se guardó bien, ahora que siga con Mercado Pago...
 
 if (error) {
     console.error("Detalle del error:", error); // Esto te dirá el error real en la consola
