@@ -358,7 +358,7 @@ async function comprar(cantidad) {
 
   // INSERTAR EN LA TABLA 'pedidoos'
   const { data, error } = await _supabase
-    .from('pedidoos') // Asegúrate que el nombre sea igual al de tu tabla
+    .from('pedidos') // Asegúrate que el nombre sea igual al de tu tabla
     .insert([
       { 
         player_id: uid, 
