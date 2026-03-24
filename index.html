@@ -27,7 +27,7 @@ body {
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centra horizontalmente todo el body */
+  align-items: center;
 }
 
 canvas {
@@ -44,13 +44,13 @@ canvas {
   max-width: 1100px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centrado estricto de hijos */
+  align-items: center;
   text-align: center;
 }
 
 .title {
   font-family: 'Orbitron', sans-serif;
-  font-size: clamp(1.8rem, 5vw, 2.8rem); /* Tamaño fluido */
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
   letter-spacing: 2px;
   margin-bottom: 30px;
   text-transform: uppercase;
@@ -59,7 +59,6 @@ canvas {
   -webkit-text-fill-color: transparent;
 }
 
-/* Buscador Mejorado y Centrado */
 .search-section {
   background: rgba(255, 255, 255, 0.03);
   padding: 20px;
@@ -70,14 +69,13 @@ canvas {
   flex-direction: row;
   gap: 10px;
   width: 100%;
-  max-width: 500px; /* Evita que sea demasiado ancho en PC */
+  max-width: 500px;
   margin-bottom: 40px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 @media (max-width: 480px) {
   .search-section { flex-direction: column; }
-  .search-section input { width: 100% !important; }
 }
 
 .search-section input {
@@ -89,8 +87,6 @@ canvas {
   color: white;
   outline: none;
   font-size: 1rem;
-  transition: 0.3s;
-  min-width: 0; /* Evita desbordamiento en flex */
 }
 
 .search-section input:focus {
@@ -108,29 +104,21 @@ canvas {
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s;
-  white-space: nowrap;
 }
 
-.btn-verify:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 20px rgba(255, 59, 59, 0.4);
-}
-
-/* Estado del Jugador */
 #status-msg {
   margin-bottom: 30px;
-  font-size: 1rem;
-  line-height: 1.5;
-  max-width: 400px;
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 
-/* Grilla de Productos */
 .diamond-grid {
   display: none; 
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 25px;
   width: 100%;
-  justify-content: center; /* Centra las tarjetas si hay pocas */
+  max-width: 1000px;
+  justify-content: center;
 }
 
 .diamond-card {
@@ -146,7 +134,7 @@ canvas {
 .diamond-card:hover {
   transform: translateY(-8px);
   border-color: var(--ff-cyan);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px var(--ff-cyan-glow);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .card-header {
@@ -188,10 +176,13 @@ canvas {
 .card-body {
   padding: 20px;
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.card-body h3 { margin: 0; font-size: 1rem; color: #e6edf3; }
-.card-body p { color: #8b949e; font-size: 0.8rem; margin: 10px 0 20px; }
+.card-body h3 { margin: 0; font-size: 1.1rem; color: #e6edf3; }
+.card-body p { color: #8b949e; font-size: 0.85rem; margin: 10px 0 20px; }
 
 .btn-buy {
   width: 100%;
@@ -204,6 +195,7 @@ canvas {
   font-weight: 700;
   cursor: pointer;
   transition: 0.3s;
+  text-transform: uppercase;
 }
 
 .btn-buy:hover {
@@ -227,11 +219,10 @@ canvas {
   <div id="status-msg"></div>
 
   <div id="diamond-grid" class="diamond-grid">
+    
     <div class="diamond-card">
       <div class="card-header">
-        <div class="img-container">
-          <img src="diamantes_110.png" alt="Pack">
-        </div>
+        <div class="img-container"><img src="diamantes_110.png" alt="Pack"></div>
         <span class="amount-text">100 + 10</span>
         <span class="label-text">DIAMANTES</span>
       </div>
@@ -244,9 +235,7 @@ canvas {
     
     <div class="diamond-card">
       <div class="card-header">
-        <div class="img-container">
-          <img src="diamantes_341.png" alt="Pack">
-        </div>
+        <div class="img-container"><img src="diamantes_341.png" alt="Pack"></div>
         <span class="amount-text">310 + 31</span>
         <span class="label-text">DIAMANTES</span>
       </div>
@@ -256,14 +245,10 @@ canvas {
         <button class="btn-buy" onclick="comprar(341)">COMPRAR</button>
       </div>
     </div>
-    </div>
 
-    <div id="diamond-grid" class="diamond-grid">
     <div class="diamond-card">
       <div class="card-header">
-        <div class="img-container">
-          <img src="diamantes_572.png" alt="Pack">
-        </div>
+        <div class="img-container"><img src="diamantes_572.png" alt="Pack"></div>
         <span class="amount-text">520 + 52</span>
         <span class="label-text">DIAMANTES</span>
       </div>
@@ -274,12 +259,9 @@ canvas {
       </div>
     </div>
 
-    <div id="diamond-grid" class="diamond-grid">
     <div class="diamond-card">
       <div class="card-header">
-        <div class="img-container">
-          <img src="diamantes_1166.png" alt="Pack">
-        </div>
+        <div class="img-container"><img src="diamantes_1166.png" alt="Pack"></div>
         <span class="amount-text">1060 + 106</span>
         <span class="label-text">DIAMANTES</span>
       </div>
@@ -290,12 +272,9 @@ canvas {
       </div>
     </div>
       
-    <div id="diamond-grid" class="diamond-grid">
     <div class="diamond-card">
       <div class="card-header">
-        <div class="img-container">
-          <img src="diamantes_2398.png" alt="Pack">
-        </div>
+        <div class="img-container"><img src="diamantes_2398.png" alt="Pack"></div>
         <span class="amount-text">2180 + 218</span>
         <span class="label-text">DIAMANTES</span>
       </div>
@@ -306,12 +285,9 @@ canvas {
       </div>
     </div>
 
-    <div id="diamond-grid" class="diamond-grid">
     <div class="diamond-card">
       <div class="card-header">
-        <div class="img-container">
-          <img src="diamantes_6160.png" alt="Pack">
-        </div>
+        <div class="img-container"><img src="diamantes_6160.png" alt="Pack"></div>
         <span class="amount-text">5600 + 560</span>
         <span class="label-text">DIAMANTES</span>
       </div>
@@ -321,11 +297,8 @@ canvas {
         <button class="btn-buy" onclick="comprar(6160)">COMPRAR</button>
       </div>
     </div>
-      
-      
 
-
-  
+  </div>
 </div>
 
 <script>
@@ -364,7 +337,6 @@ async function buscarPlayer() {
 
 function comprar(t) { alert("Redirigiendo al pago por " + t + " diamantes."); }
 
-// Fondo de partículas
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 let particles = [];
