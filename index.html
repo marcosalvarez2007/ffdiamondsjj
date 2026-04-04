@@ -24,6 +24,7 @@ body {
   font-family: 'Roboto', sans-serif;
   background-color: var(--dark-bg);
   color: white;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,67 +35,155 @@ canvas {
   top: 0;
   left: 0;
   z-index: -1;
+  background: radial-gradient(circle at center, #111e2d 0%, #0d1117 100%);
 }
 
 .container {
   padding: 40px 15px;
   width: 100%;
   max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
 
 .title {
   font-family: 'Orbitron', sans-serif;
-  font-size: 2rem;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  letter-spacing: 2px;
   margin-bottom: 30px;
+  text-transform: uppercase;
+  background: linear-gradient(to bottom, #ffffff, #888);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .search-section {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
   display: flex;
+  flex-direction: row;
   gap: 10px;
-  margin-bottom: 30px;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 40px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+@media (max-width: 480px) {
+  .search-section { flex-direction: column; }
 }
 
 .search-section input {
   flex: 1;
-  padding: 12px;
-  border-radius: 10px;
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
   background: #0d1117;
   color: white;
-  border: 1px solid var(--border-color);
+  outline: none;
+  font-size: 1rem;
+}
+
+.search-section input:focus {
+  border-color: var(--ff-cyan);
+  box-shadow: 0 0 15px var(--ff-cyan-glow);
 }
 
 .btn-verify {
-  padding: 12px;
-  border-radius: 10px;
+  padding: 15px 25px;
   border: none;
+  border-radius: 12px;
   background: var(--accent-gradient);
   color: white;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
   cursor: pointer;
 }
 
-#status-msg { margin-bottom: 20px; }
+#status-msg {
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
 
 .diamond-grid {
-  display: none;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  display: none; 
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  width: 100%;
+  max-width: 1000px;
+  justify-content: center;
 }
 
 .diamond-card {
   background: var(--card-bg);
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.diamond-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--ff-cyan);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.card-header {
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(180deg, #1a2332 0%, #0d1117 100%);
+}
+
+.img-container {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.img-container img {
+  max-height: 100%;
+  max-width: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px var(--ff-cyan-glow));
+}
+
+.amount-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.label-text {
+  font-size: 0.7rem;
+  color: var(--ff-cyan);
+  letter-spacing: 3px;
+  font-weight: bold;
+}
+
+.card-body {
   padding: 20px;
-  border-radius: 15px;
 }
 
 .btn-buy {
-  margin-top: 10px;
-  padding: 10px;
   width: 100%;
+  padding: 14px;
   border: none;
   border-radius: 10px;
   background: var(--ff-cyan);
   color: white;
+  font-family: 'Orbitron';
   cursor: pointer;
 }
 </style>
@@ -116,46 +205,57 @@ canvas {
   <div id="diamond-grid" class="diamond-grid">
 
     <div class="diamond-card">
-      <h3>110 Diamantes</h3>
-      <p>$1</p>
-      <button class="btn-buy" onclick="comprar(110)">COMPRAR</button>
+      <div class="card-body">
+        <h3>110 Diamantes</h3>
+        <p>$1</p>
+        <button class="btn-buy" onclick="comprar(110)">COMPRAR</button>
+      </div>
     </div>
 
     <div class="diamond-card">
-      <h3>341 Diamantes</h3>
-      <p>$3600</p>
-      <button class="btn-buy" onclick="comprar(341)">COMPRAR</button>
+      <div class="card-body">
+        <h3>341 Diamantes</h3>
+        <p>$3600</p>
+        <button class="btn-buy" onclick="comprar(341)">COMPRAR</button>
+      </div>
     </div>
 
     <div class="diamond-card">
-      <h3>572 Diamantes</h3>
-      <p>$5800</p>
-      <button class="btn-buy" onclick="comprar(572)">COMPRAR</button>
+      <div class="card-body">
+        <h3>572 Diamantes</h3>
+        <p>$5800</p>
+        <button class="btn-buy" onclick="comprar(572)">COMPRAR</button>
+      </div>
     </div>
 
     <div class="diamond-card">
-      <h3>1166 Diamantes</h3>
-      <p>$11500</p>
-      <button class="btn-buy" onclick="comprar(1166)">COMPRAR</button>
+      <div class="card-body">
+        <h3>1166 Diamantes</h3>
+        <p>$11500</p>
+        <button class="btn-buy" onclick="comprar(1166)">COMPRAR</button>
+      </div>
     </div>
 
     <div class="diamond-card">
-      <h3>2398 Diamantes</h3>
-      <p>$19800</p>
-      <button class="btn-buy" onclick="comprar(2398)">COMPRAR</button>
+      <div class="card-body">
+        <h3>2398 Diamantes</h3>
+        <p>$19800</p>
+        <button class="btn-buy" onclick="comprar(2398)">COMPRAR</button>
+      </div>
     </div>
 
     <div class="diamond-card">
-      <h3>6160 Diamantes</h3>
-      <p>$47000</p>
-      <button class="btn-buy" onclick="comprar(6160)">COMPRAR</button>
+      <div class="card-body">
+        <h3>6160 Diamantes</h3>
+        <p>$47000</p>
+        <button class="btn-buy" onclick="comprar(6160)">COMPRAR</button>
+      </div>
     </div>
 
   </div>
 </div>
 
 <script>
-// 🔎 Buscar jugador
 async function buscarPlayer() {
   const uid = document.getElementById("uid").value.trim();
   const status = document.getElementById("status-msg");
@@ -180,77 +280,41 @@ async function buscarPlayer() {
       status.innerHTML = "❌ ID no encontrado";
     }
   } catch {
-    status.innerHTML = "⚠️ Error de conexión";
+    status.innerHTML = "⚠️ Error";
   }
 }
 
-// 💎 Comprar → WhatsApp
 function comprar(cantidad) {
   const uid = document.getElementById("uid").value;
-  const statusMsg = document.getElementById("status-msg");
-  const nickname = statusMsg.getAttribute("data-nickname") || "Jugador";
-
-  if (!uid) {
-    alert("Primero ingresá tu ID");
-    return;
-  }
+  const nickname = document.getElementById("status-msg").getAttribute("data-nickname") || "Jugador";
 
   const precios = {
-    110: 1,
-    341: 3600,
-    572: 5800,
-    1166: 11500,
-    2398: 19800,
-    6160: 47000
+    110: 1, 341: 3600, 572: 5800,
+    1166: 11500, 2398: 19800, 6160: 47000
   };
 
   const monto = precios[cantidad];
 
   const mensaje = `💎 PEDIDO
+👤 ${nickname}
+🆔 ${uid}
+📦 ${cantidad}
+💰 $${monto}`;
 
-
-🆔 ID: ${uid}
-📦 Pack: ${cantidad}
-💰 Precio: $${monto}
-💳 Pago: Transferencia / Mercado Pago / Otro`;
-
-  const url = `https://wa.me/543517016162?text=${encodeURIComponent(mensaje)}`;
-
-  window.open(url, "_blank");
+  window.open(`https://wa.me/543517016162?text=${encodeURIComponent(mensaje)}`);
 }
 
-// 🎨 Fondo animado
+// fondo animado
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
-let particles = [];
 
-function init() {
+function resize() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  particles = [];
-
-  for (let i = 0; i < 60; i++) {
-    particles.push({
-      x: Math.random()*canvas.width,
-      y: Math.random()*canvas.height,
-      dx: (Math.random()-0.5),
-      dy: (Math.random()-0.5)
-    });
-  }
 }
 
-function animate() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  particles.forEach(p=>{
-    ctx.fillRect(p.x,p.y,2,2);
-    p.x+=p.dx;
-    p.y+=p.dy;
-  });
-  requestAnimationFrame(animate);
-}
-
-init();
-animate();
+resize();
+window.onresize = resize;
 </script>
 
 </body>
