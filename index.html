@@ -8,132 +8,434 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 
 <style>
-/* (TODO tu CSS igual, no lo toqué) */
-body { margin:0; font-family:Roboto; background:#0d1117; color:white; }
+:root {
+  --ff-cyan: #00acc1;
+  --ff-cyan-glow: rgba(0, 172, 193, 0.4);
+  --dark-bg: #0d1117;
+  --card-bg: #161b22;
+  --border-color: #30363d;
+  --accent-gradient: linear-gradient(45deg, #ff3b3b, #ff7b00);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--dark-bg);
+  color: white;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background: radial-gradient(circle at center, #111e2d 0%, #0d1117 100%);
+}
+
+.container {
+  padding: 40px 15px;
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  letter-spacing: 2px;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  background: linear-gradient(to bottom, #ffffff, #888);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.search-section {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 40px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+@media (max-width: 480px) {
+  .search-section { flex-direction: column; }
+}
+
+.search-section input {
+  flex: 1;
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: #0d1117;
+  color: white;
+  outline: none;
+  font-size: 1rem;
+}
+
+.search-section input:focus {
+  border-color: var(--ff-cyan);
+  box-shadow: 0 0 15px var(--ff-cyan-glow);
+}
+
+.btn-verify {
+  padding: 15px 25px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent-gradient);
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#status-msg {
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.diamond-grid {
+  display: none; 
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  width: 100%;
+  max-width: 1000px;
+  justify-content: center;
+}
+
+.diamond-card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.diamond-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--ff-cyan);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.card-header {
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(180deg, #1a2332 0%, #0d1117 100%);
+}
+
+.img-container {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.img-container img {
+  max-height: 100%;
+  max-width: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px var(--ff-cyan-glow));
+}
+
+.amount-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.label-text {
+  font-size: 0.7rem;
+  color: var(--ff-cyan);
+  letter-spacing: 3px;
+  font-weight: bold;
+}
+
+.card-body {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-body h3 { margin: 0; font-size: 1.1rem; color: #e6edf3; }
+.card-body p { color: #8b949e; font-size: 0.85rem; margin: 10px 0 20px; }
+
+.btn-buy {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: var(--ff-cyan);
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+  text-transform: uppercase;
+}
+
+.btn-buy:hover {
+  background: #00d4ec;
+  box-shadow: 0 0 15px var(--ff-cyan-glow);
+}
 </style>
 </head>
 <body>
 
+<canvas id="bg"></canvas>
+
 <div class="container">
-  <input type="text" id="uid" placeholder="ID">
-  <button onclick="buscarPlayer()">BUSCAR</button>
+  <h1 class="title">RECARGA DIAMANTES</h1>
+
+  <div class="search-section">
+    <input type="text" id="uid" placeholder="Ingresa tu ID de Jugador">
+    <button class="btn-verify" onclick="buscarPlayer()">BUSCAR</button>
+  </div>
+
   <div id="status-msg"></div>
 
-  <button onclick="comprar(110)">Comprar 110</button>
+  <div id="diamond-grid" class="diamond-grid">
+    
+    <div class="diamond-card">
+      <div class="card-header">
+        <div class="img-container"><img src="diamantes_110.png" alt="Pack"></div>
+        <span class="amount-text">100 + 10</span>
+        <span class="label-text">DIAMANTES</span>
+      </div>
+      <div class="card-body">
+        <h3>100 diamantes + 10 bono</h3>
+        <p>Precio: $1</p>
+        <button class="btn-buy" onclick="comprar(110)">COMPRAR</button>
+      </div>
+    </div>
+    
+    <div class="diamond-card">
+      <div class="card-header">
+        <div class="img-container"><img src="diamantes_341.png" alt="Pack"></div>
+        <span class="amount-text">310 + 31</span>
+        <span class="label-text">DIAMANTES</span>
+      </div>
+      <div class="card-body">
+        <h3>310 diamantes + 31 bono</h3>
+        <p>Precio: $3.600</p>
+        <button class="btn-buy" onclick="comprar(341)">COMPRAR</button>
+      </div>
+    </div>
+
+    <div class="diamond-card">
+      <div class="card-header">
+        <div class="img-container"><img src="diamantes_572.png" alt="Pack"></div>
+        <span class="amount-text">520 + 52</span>
+        <span class="label-text">DIAMANTES</span>
+      </div>
+      <div class="card-body">
+        <h3>520 diamantes + 52 bono</h3>
+        <p>Precio: $5.800</p>
+        <button class="btn-buy" onclick="comprar(572)">COMPRAR</button>
+      </div>
+    </div>
+
+    <div class="diamond-card">
+      <div class="card-header">
+        <div class="img-container"><img src="diamantes_1166.png" alt="Pack"></div>
+        <span class="amount-text">1060 + 106</span>
+        <span class="label-text">DIAMANTES</span>
+      </div>
+      <div class="card-body">
+        <h3>1060 diamantes + 106 bono</h3>
+        <p>Precio: $11.500</p>
+        <button class="btn-buy" onclick="comprar(1166)">COMPRAR</button>
+      </div>
+    </div>
+      
+    <div class="diamond-card">
+      <div class="card-header">
+        <div class="img-container"><img src="diamantes_2398.png" alt="Pack"></div>
+        <span class="amount-text">2180 + 218</span>
+        <span class="label-text">DIAMANTES</span>
+      </div>
+      <div class="card-body">
+        <h3>2180 diamantes + 218 bono</h3>
+        <p>Precio: $19.800</p>
+        <button class="btn-buy" onclick="comprar(2398)">COMPRAR</button>
+      </div>
+    </div>
+
+    <div class="diamond-card">
+      <div class="card-header">
+        <div class="img-container"><img src="diamantes_6160.png" alt="Pack"></div>
+        <span class="amount-text">5600 + 560</span>
+        <span class="label-text">DIAMANTES</span>
+      </div>
+      <div class="card-body">
+        <h3>5600 diamantes + 560 bono</h3>
+        <p>Precio: $47.000</p>
+        <button class="btn-buy" onclick="comprar(6160)">COMPRAR</button>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
+// 1. CONFIGURACIÓN SUPABASE
+const _supabaseUrl = 'https://yjzmyrwtswivvozscsim.supabase.co';
+const _supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqem15cnd0c3dpdnZvenNjc2ltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMTg5MDksImV4cCI6MjA4OTg5NDkwOX0.eAZvrQzVFd9EIbDrLR0nExGYRn3OSyVYhyXkw2zJwBQ';
+const _supabase = supabase.createClient(_supabaseUrl, _supabaseKey);
 
-// ==========================
-// 🔒 SUPABASE DESACTIVADO
-// ==========================
+// 2. CONFIGURACIÓN MERCADO PAGO (PRODUCCIÓN)
+const MP_ACCESS_TOKEN = "APP_USR-8761208335232861-032412-aa5ac1dfd18dbc0ebefc06172e62f12c-1873929241";
 
-// const _supabaseUrl = 'https://yjzmyrwtswivvozscsim.supabase.co';
-// const _supabaseKey = 'TU_KEY';
-// const _supabase = supabase.createClient(_supabaseUrl, _supabaseKey);
-
-
-// ==========================
-// 🔒 MERCADO PAGO DESACTIVADO
-// ==========================
-
-// const MP_ACCESS_TOKEN = "TU_TOKEN";
-
-
-// ==========================
-// BUSCAR PLAYER (igual)
-// ==========================
 async function buscarPlayer() {
-
-  const uid = document.getElementById("uid").value;
+  const uidInput = document.getElementById("uid");
+  const uid = uidInput.value.trim();
   const status = document.getElementById("status-msg");
+  const grid = document.getElementById("diamond-grid");
 
   if (!uid) {
-    status.innerHTML = "❌ Ingresa ID";
+    status.style.color = "#ff3b3b";
+    status.innerHTML = "❌ Ingresa tu ID de Jugador";
     return;
   }
 
-  status.innerHTML = "Buscando...";
+  status.style.color = "#00acc1";
+  status.innerHTML = "🔎 Verificando ID...";
 
   try {
-    const res = await fetch(`https://pilot-tin-computation-relevance.trycloudflare.com/api/player?uid=${uid}`);
-    const data = await res.json();
+    const response = await fetch(`https://pilot-tin-computation-relevance.trycloudflare.com/api/player?uid=${uid}`);
+    const data = await response.json();
 
     if (data.status === "ok") {
-      status.setAttribute("data-nickname", data.nickname);
-      status.innerHTML = "✅ " + data.nickname;
+      status.style.color = "#4ade80";
+      status.setAttribute('data-nickname', data.nickname);
+      status.innerHTML = `✅ Jugador encontrado: <b>${data.nickname}</b>`;
+      grid.style.display = "grid"; 
     } else {
-      status.innerHTML = "❌ No encontrado";
+      status.style.color = "#ff3b3b";
+      status.innerHTML = "❌ ID no encontrado";
+      grid.style.display = "none";
     }
-
-  } catch {
-    status.innerHTML = "Error conexión";
+  } catch (e) {
+    status.innerHTML = "⚠️ Error de conexión";
   }
 }
 
-
-// ==========================
-// 💸 COMPRAR (MODO TEST)
-// ==========================
 async function comprar(cantidad) {
-
   const uid = document.getElementById("uid").value;
-  const status = document.getElementById("status-msg");
-  const nickname = status.getAttribute("data-nickname") || "Desconocido";
+  const statusMsg = document.getElementById("status-msg");
+  const nickname = statusMsg.getAttribute('data-nickname') || "Desconocido";
 
-  if (!uid) return alert("Verifica ID");
+  if (!uid) return alert("❌ Verifica tu ID primero.");
 
-  status.innerHTML = "Procesando...";
+  const precios = {
+    110: 1, 341: 3600, 572: 5800,
+    1166: 11500, 2398: 19800, 6160: 47000
+  };
+  const monto = precios[cantidad];
+
+  statusMsg.innerHTML = "⏳ Generando orden...";
 
   try {
+    // A. GUARDAR EN SUPABASE (Sin .select() para evitar error de RLS)
+    const { error: dbError } = await _supabase
+      .from('pedidos')
+      .insert([{ 
+        player_id: uid.toString(),
+        nickname: nickname,
+        paquete: parseInt(cantidad),
+        monto: parseFloat(monto),
+        estado: 'pendiente' 
+      }]);
 
-    // ==========================
-    // 🗄️ BASE DE DATOS OFF
-    // ==========================
+    if (dbError) throw new Error("Error Base Datos: " + dbError.message);
 
-    // await _supabase.from('pedidos').insert([{
-    //   player_id: uid,
-    //   nickname: nickname,
-    //   paquete: cantidad
-    // }]);
+    // B. CREAR PREFERENCIA EN MERCADO PAGO
+    const mpRes = await fetch("https://api.mercadopago.com/checkout/preferences", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${MP_ACCESS_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        items: [{
+          title: `Recarga ${cantidad} Diams - ID ${uid}`,
+          quantity: 1,
+          unit_price: Number(monto),
+          currency_id: "ARS"
+        }],
+        external_reference: `${uid}-${Date.now()}`, 
+        back_urls: {
+          success: window.location.href,
+          failure: window.location.href
+        },
+        auto_return: "approved"
+      })
+    });
 
+    const preference = await mpRes.json();
+    
+    if (preference.init_point) {
+      window.location.href = preference.init_point;
+    } else {
+      throw new Error("No se pudo crear el link de pago");
+    }
 
-    // ==========================
-    // 💳 CHECKOUT OFF
-    // ==========================
-
-    // const mpRes = await fetch("https://api.mercadopago.com/checkout/preferences", {
-    //   method: "POST",
-    //   headers: {
-    //     Authorization: `Bearer ${MP_ACCESS_TOKEN}`,
-    //     "Content-Type": "application/json"
-    //   },
-    //   body: JSON.stringify({
-    //     items: [{
-    //       title: "Diamantes",
-    //       quantity: 1,
-    //       unit_price: 100
-    //     }]
-    //   })
-    // });
-
-    // const pref = await mpRes.json();
-    // window.location.href = pref.init_point;
-
-
-    // ==========================
-    // ✅ SIMULACIÓN
-    // ==========================
-    status.innerHTML = `✅ Compra simulada (${cantidad}) para ${nickname}`;
-
-  } catch (e) {
-    alert("Error");
+  } catch (err) {
+    console.error(err);
+    alert("❌ Error: " + err.message);
+    statusMsg.innerHTML = "❌ Error al procesar";
   }
 }
 
+// --- FONDO ANIMADO ---
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+let particles = [];
+function init() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  particles = [];
+  for(let i=0; i<70; i++) {
+    particles.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*2, dx:(Math.random()-0.5)*0.5, dy:(Math.random()-0.5)*0.5});
+  }
+}
+function animate() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p => {
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(0,172,193,0.15)"; ctx.fill();
+    p.x += p.dx; p.y += p.dy;
+    if(p.x<0||p.x>canvas.width) p.dx*=-1; if(p.y<0||p.y>canvas.height) p.dy*=-1;
+  });
+  requestAnimationFrame(animate);
+}
+init(); animate();
+window.onresize = init;
 </script>
-
 </body>
 </html>
