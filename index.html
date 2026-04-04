@@ -274,7 +274,7 @@ async function buscarPlayer() {
 
     if (data.status === "ok") {
       status.setAttribute("data-nickname", data.nickname);
-      status.innerHTML = `✅ ${data.nickname}`;
+      status.innerHTML = `Jugador : ${data.nickname}`;
       grid.style.display = "grid";
     } else {
       status.innerHTML = "❌ ID no encontrado";
